@@ -198,7 +198,7 @@
                 <version>1.17.3</version>
                 <configuration>
                     <targetClasses>
-                        <param>com.rbdip.bookstore.order.PricingCalculator</param>
+                        <param>com.rbdip.bookstore.order.service.PricingCalculator</param>
                     </targetClasses>
                     <targetTests>
                         <param>com.rbdip.bookstore.*</param>

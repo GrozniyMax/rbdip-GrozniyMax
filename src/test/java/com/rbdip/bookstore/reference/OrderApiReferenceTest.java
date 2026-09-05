@@ -2,7 +2,7 @@ package com.rbdip.bookstore.reference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.rbdip.bookstore.order.CreateOrderRequest;
+import com.rbdip.bookstore.order.controller.dto.CreateOrderRequest;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;

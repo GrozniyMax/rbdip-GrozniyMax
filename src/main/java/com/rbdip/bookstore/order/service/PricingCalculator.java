@@ -1,4 +1,4 @@
-package com.rbdip.bookstore.order;
+package com.rbdip.bookstore.order.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

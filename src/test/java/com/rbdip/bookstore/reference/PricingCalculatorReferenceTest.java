@@ -2,7 +2,7 @@ package com.rbdip.bookstore.reference;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.rbdip.bookstore.order.PricingCalculator;
+import com.rbdip.bookstore.order.service.PricingCalculator;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.Test;

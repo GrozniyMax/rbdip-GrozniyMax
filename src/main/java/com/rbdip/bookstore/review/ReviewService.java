@@ -1,7 +1,7 @@
 package com.rbdip.bookstore.review;
 
-import com.rbdip.bookstore.order.OrderItemRepository;
-import com.rbdip.bookstore.order.OrderRepository;
+import com.rbdip.bookstore.order.repository.entities.OrderItemRepository;
+import com.rbdip.bookstore.order.repository.OrderRepository;
 import java.util.List;
 import org.springframework.stereotype.Service;
 

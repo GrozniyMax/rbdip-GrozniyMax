@@ -1,4 +1,4 @@
-package com.rbdip.bookstore.order;
+package com.rbdip.bookstore.order.controller.dto;
 
 import java.util.List;
 
