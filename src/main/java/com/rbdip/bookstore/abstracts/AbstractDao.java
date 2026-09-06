@@ -16,9 +16,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public abstract class AbstractDao<DOMAIN, ENTITY, ID> {
 
-    private final JpaRepository<ENTITY, ID> repository;
+    protected final JpaRepository<ENTITY, ID> repository;
 
-    private final Mapper<DOMAIN, ENTITY> mapper;
+    protected final Mapper<DOMAIN, ENTITY> mapper;
 
     protected AbstractDao(JpaRepository<ENTITY, ID> repository, Mapper<DOMAIN, ENTITY> mapper) {
         this.repository = repository;
