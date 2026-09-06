@@ -1,6 +1,6 @@
 package com.rbdip.bookstore.order.service.domain;
 
-import com.rbdip.bookstore.product.Product;
+import com.rbdip.bookstore.product.service.domain.Product;
 
 import java.math.BigDecimal;
 
@@ -13,4 +13,8 @@ public record OrderItem(
         Long orderId,
         Product product,
         Integer quantity) {
+
+    public BigDecimal getTotalPrice() {
+        return product.price().multiply(BigDecimal.valueOf(quantity));
+    }
 }

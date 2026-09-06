@@ -1,5 +1,7 @@
 package com.rbdip.bookstore.order.service.domain;
 
+import com.rbdip.bookstore.order.service.domain.customer.Customer;
+
 import java.time.Instant;
 
 /**
@@ -10,6 +12,10 @@ import java.time.Instant;
 public record Order(
         Long id,
         Customer customer,
-        String status,
+        OrderStatus status,
         Instant createdAt) {
+
+    public Order(Customer customer, OrderStatus status) {
+        this(null, customer, status, Instant.now());
+    }
 }

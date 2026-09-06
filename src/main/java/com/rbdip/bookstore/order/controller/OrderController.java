@@ -1,14 +1,14 @@
 package com.rbdip.bookstore.order.controller;
 
+import com.rbdip.bookstore.order.controller.dto.in.CreateOrderRequest;
+import com.rbdip.bookstore.order.controller.dto.out.OrderCreationResult;
+import com.rbdip.bookstore.order.controller.dto.out.OrderDto;
+import com.rbdip.bookstore.order.service.OrderCreator;
+import com.rbdip.bookstore.order.service.OrderStorage;
+import com.rbdip.bookstore.order.service.domain.Order;
+import com.rbdip.bookstore.order.service.domain.customer.Customer;
+import jakarta.validation.Valid;
 import java.util.List;
-import java.util.Map;
-
-import com.rbdip.bookstore.order.controller.dto.CreateOrderRequest;
-import com.rbdip.bookstore.order.repository.entities.Order;
-import com.rbdip.bookstore.order.repository.entities.OrderItem;
-import com.rbdip.bookstore.order.repository.entities.OrderItemRepository;
-import com.rbdip.bookstore.order.repository.OrderRepository;
-import com.rbdip.bookstore.order.service.domain.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,40 +19,40 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class OrderController {
 
-    private final OrderService orderService;
-    private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
+    private final OrderStorage orderStorage;
+    private final OrderCreator orderCreator;
+    private final DtoMapper mapper;
 
-    public OrderController(
-            OrderService orderService, OrderRepository orderRepository, OrderItemRepository orderItemRepository) {
-        this.orderService = orderService;
-        this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
+    public OrderController(OrderStorage orderStorage, OrderCreator orderCreator, DtoMapper mapper) {
+        this.orderStorage = orderStorage;
+        this.orderCreator = orderCreator;
+        this.mapper = mapper;
     }
 
     @PostMapping("/orders")
     @ResponseStatus(HttpStatus.CREATED)
-    public Map<String, Object> createOrder(@RequestBody CreateOrderRequest request) {
-        Order order = orderService.createOrder(request);
-        return Map.of("id", order.getId(), "status", order.getStatus());
+    public OrderCreationResult createOrder(@Valid @RequestBody CreateOrderRequest request) {
+        Customer customer = new Customer(
+                request.customerName(),
+                request.customerAddress(),
+                request.customerPhone(),
+                request.customerType());
+
+        var items = request.items().stream()
+                .map(i -> new OrderCreator.OrderItemCreationIntent(i.productId(), i.quantity()))
+                .toList();
+
+        Order order = orderCreator.createOrder(customer, items, request.couponCode());
+
+        return mapper.toOrderCreationResult(order);
     }
 
     @GetMapping("/orders")
-    public List<Map<String, Object>> listOrders() {
-        List<Order> orders = orderRepository.findAll();
+    public List<OrderDto> listOrders() {
+        List<OrderStorage.FullOrder> orders = orderStorage.findAll();
+
         return orders.stream()
-                .map(order -> {
-                    // N+1: отдельный запрос на позиции для каждого заказа вместо
-                    // одного JOIN FETCH / batch-запроса. Цель для ЛР4.
-                    List<OrderItem> items = orderItemRepository.findByOrderId(order.getId());
-                    return Map.<String, Object>of(
-                            "id", order.getId(),
-                            "customerFullName", order.getCustomerFullName(),
-                            "status", order.getStatus(),
-                            "items", items.stream()
-                                    .map(i -> Map.of("productName", i.getProductName(), "quantity", i.getQuantity()))
-                                    .toList());
-                })
+                .map(order -> mapper.toOrderDto(order.order(), order.items()))
                 .toList();
     }
 }

@@ -1,8 +1,10 @@
 package com.rbdip.bookstore.order.repository.dao;
 
 import com.rbdip.bookstore.abstracts.Mapper;
-import com.rbdip.bookstore.order.service.domain.Customer;
 import com.rbdip.bookstore.order.service.domain.Order;
+import com.rbdip.bookstore.order.service.domain.OrderStatus;
+import com.rbdip.bookstore.order.service.domain.customer.Customer;
+import com.rbdip.bookstore.order.service.domain.customer.CustomerType;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,7 +22,7 @@ public class OrderMapper implements Mapper<Order, com.rbdip.bookstore.order.repo
                 domain.customer().fullName(),
                 domain.customer().address(),
                 domain.customer().phone(),
-                domain.status());
+                domain.status().getValue());
     }
 
     @Override
@@ -30,8 +32,9 @@ public class OrderMapper implements Mapper<Order, com.rbdip.bookstore.order.repo
                 new Customer(
                         entity.getCustomerFullName(),
                         entity.getCustomerAddress(),
-                        entity.getCustomerPhone()),
-                entity.getStatus(),
+                        entity.getCustomerPhone(),
+                        CustomerType.REGULAR),
+                OrderStatus.withValue(entity.getStatus()).orElse(OrderStatus.NEW),
                 entity.getCreatedAt());
     }
 }
