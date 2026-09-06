@@ -1,6 +1,6 @@
 package com.rbdip.bookstore.order.service.domain;
 
-import com.rbdip.bookstore.product.service.domain.Product;
+import com.rbdip.bookstore.product.domain.Product;
 
 import java.math.BigDecimal;
 

@@ -1,4 +1,4 @@
-package com.rbdip.bookstore.product;
+package com.rbdip.bookstore.product.repository.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -2,7 +2,7 @@ package com.rbdip.bookstore.order.repository.dao;
 
 import com.rbdip.bookstore.abstracts.Mapper;
 import com.rbdip.bookstore.order.service.domain.OrderItem;
-import com.rbdip.bookstore.product.service.domain.Product;
+import com.rbdip.bookstore.product.domain.Product;
 import org.springframework.stereotype.Component;
 
 /**

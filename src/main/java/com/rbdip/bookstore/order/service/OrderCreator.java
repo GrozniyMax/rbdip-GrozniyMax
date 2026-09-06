@@ -8,8 +8,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.rbdip.bookstore.product.service.domain.Product;
-import com.rbdip.bookstore.product.service.domain.ProductNotFountException;
+import com.rbdip.bookstore.product.domain.Product;
+import com.rbdip.bookstore.product.domain.ProductNotFountException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
