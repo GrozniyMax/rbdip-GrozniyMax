@@ -1,7 +1,9 @@
-package com.rbdip.bookstore.review;
+package com.rbdip.bookstore.review.service;
 
-import com.rbdip.bookstore.order.repository.entities.OrderItemRepository;
+import com.rbdip.bookstore.order.repository.OrderItemRepository;
 import com.rbdip.bookstore.order.repository.OrderRepository;
+import com.rbdip.bookstore.review.repository.dao.ReviewDao;
+import com.rbdip.bookstore.review.service.domain.Review;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -16,15 +18,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReviewService {
 
-    private final ReviewRepository reviewRepository;
+    private final ReviewDao reviewDao;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
 
     public ReviewService(
-            ReviewRepository reviewRepository,
+            ReviewDao reviewDao,
             OrderRepository orderRepository,
             OrderItemRepository orderItemRepository) {
-        this.reviewRepository = reviewRepository;
+        this.reviewDao = reviewDao;
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
     }
@@ -35,11 +37,17 @@ public class ReviewService {
         // намеренная связанность, которую нужно устранить.
         boolean verifiedPurchase = !orderRepository.findAll().isEmpty()
                 && !orderItemRepository.findAll().isEmpty();
-        Review review = new Review(productId, authorName == null ? "anonymous" : authorName, rating, comment);
-        return reviewRepository.save(review);
+        Review review = new Review(
+                null,
+                productId,
+                authorName == null ? "anonymous" : authorName,
+                rating,
+                comment,
+                null);
+        return reviewDao.save(review);
     }
 
     public List<Review> listReviews(Long productId) {
-        return reviewRepository.findByProductId(productId);
+        return reviewDao.findByProductId(productId);
     }
 }

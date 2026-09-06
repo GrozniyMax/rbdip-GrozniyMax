@@ -1,5 +1,6 @@
-package com.rbdip.bookstore.review;
+package com.rbdip.bookstore.review.repository;
 
+import com.rbdip.bookstore.review.repository.entities.Review;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 

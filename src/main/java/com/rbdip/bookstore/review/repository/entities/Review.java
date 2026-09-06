@@ -1,4 +1,4 @@
-package com.rbdip.bookstore.review;
+package com.rbdip.bookstore.review.repository.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,5 +59,9 @@ public class Review {
 
     public String getComment() {
         return comment;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 }
