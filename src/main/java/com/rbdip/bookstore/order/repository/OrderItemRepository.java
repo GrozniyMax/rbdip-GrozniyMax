@@ -1,13 +1,14 @@
 package com.rbdip.bookstore.order.repository;
 
-import java.util.List;
-
 import com.rbdip.bookstore.order.repository.entities.OrderItem;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-    // Намеренно нет @EntityGraph/JOIN FETCH-варианта - используется в цикле
-    // контроллером, что и создаёт N+1 (см. OrderController#listOrders).
+    // JOIN FETCH нужен, т.к. open-in-view=false: чтение позиций происходит вне
+    // транзакции, поэтому товар должен быть извлечён тем же запросом.
+    @Query("select oi from OrderItem oi join fetch oi.product where oi.orderId = :orderId")
     List<OrderItem> findByOrderId(Long orderId);
 }

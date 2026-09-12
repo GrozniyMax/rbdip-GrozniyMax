@@ -1,5 +1,6 @@
 package com.rbdip.bookstore.order.service;
 
+import com.rbdip.bookstore.order.repository.dao.CustomerDao;
 import com.rbdip.bookstore.order.repository.dao.OrderDao;
 import com.rbdip.bookstore.order.repository.dao.OrderItemDao;
 import com.rbdip.bookstore.order.service.domain.customer.Customer;
@@ -24,16 +25,20 @@ public class OrderStorage {
 
     private final OrderItemDao orderItemDao;
 
-    public OrderStorage(OrderDao orderDao, OrderItemDao orderItemDao) {
+    private final CustomerDao customerDao;
+
+    public OrderStorage(OrderDao orderDao, OrderItemDao orderItemDao, CustomerDao customerDao) {
         this.orderDao = orderDao;
         this.orderItemDao = orderItemDao;
+        this.customerDao = customerDao;
     }
 
     @Transactional
     public Order createOrder(Customer customer, List<OrderItem> items) {
-        Order order = new Order(
-                customer, OrderStatus.NEW);
-        Order savedOrder = orderDao.save(order);
+        // Нормализованная схема (ЛР2): сначала персистим клиента, получаем его id,
+        // затем создаём заказ, ссылающийся на клиента внешним ключом.
+        Long customerId = customerDao.saveAndGetId(customer);
+        Order savedOrder = orderDao.create(customerId, OrderStatus.NEW);
 
         List<OrderItem> persistedItems = items.stream()
                 .map(item -> new OrderItem(item.id(), savedOrder.id(), item.product(), item.quantity()))
