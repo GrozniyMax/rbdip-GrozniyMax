@@ -210,6 +210,15 @@
                     </outputFormats>
                     <failWhenNoMutations>false</failWhenNoMutations>
                 </configuration>
+                <!-- Без pitest-junit5-plugin PIT не может исполнять JUnit5-тесты
+                     (все мутации падают в NO_COVERAGE). Необходимо для гейта lab5_mutation. -->
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
