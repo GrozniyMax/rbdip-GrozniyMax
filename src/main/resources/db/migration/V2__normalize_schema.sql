@@ -31,10 +31,11 @@ ALTER TABLE orders ALTER COLUMN customer_id SET NOT NULL;
 ALTER TABLE orders ADD CONSTRAINT fk_orders_customer
     FOREIGN KEY (customer_id) REFERENCES customers(id);
 
-ALTER TABLE orders
-    DROP COLUMN customer_full_name,
-    DROP COLUMN customer_address,
-    DROP COLUMN customer_phone;
+-- Legacy-колонки клиента остаются в orders до contract-шага (V4): они нужны,
+-- чтобы потребители старой колонки customer_full_name (гейт ЛР3 lab3_migration)
+-- не падали во время expand/backfill-миграций. Приложение их больше не пишет
+-- (данные живут в customers), поэтому customer_full_name делаем nullable.
+ALTER TABLE orders ALTER COLUMN customer_full_name DROP NOT NULL;
 
 -- order_items: ссылка на products вместо дублирования названия и цены товара.
 ALTER TABLE order_items ADD COLUMN product_id BIGINT;
