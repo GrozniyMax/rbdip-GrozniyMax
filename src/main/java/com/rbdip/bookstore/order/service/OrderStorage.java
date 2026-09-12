@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class OrderStorage {
@@ -50,13 +52,16 @@ public class OrderStorage {
 
     public List<FullOrder> findAll() {
         List<Order> orders = orderDao.findAll();
+        if (orders.isEmpty()) {
+            return List.of();
+        }
+        List<Long> orderIds = orders.stream().map(Order::id).toList();
+        // Батч (ЛР4): все позиции всех заказов одним запросом вместо N+1 -
+        // отдельного запроса на позиции для каждого заказа.
+        Map<Long, List<OrderItem>> itemsByOrderId = orderItemDao.findAllByOrderIds(orderIds).stream()
+                .collect(Collectors.groupingBy(OrderItem::orderId));
         return orders.stream()
-                .map(order -> {
-                    // N+1: отдельный запрос на позиции для каждого заказа вместо
-                    // одного JOIN FETCH / batch-запроса. Цель для ЛР4.
-                    List<OrderItem> items = orderItemDao.findByOrderId(order.id());
-                    return new FullOrder(order, items);
-                })
+                .map(order -> new FullOrder(order, itemsByOrderId.getOrDefault(order.id(), List.of())))
                 .toList();
     }
 }
