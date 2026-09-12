@@ -31,7 +31,7 @@ public class OrderItemDao extends AbstractDao<OrderItem, com.rbdip.bookstore.ord
             ProductRepository productRepository,
             ProductMapper productMapper) {
         // Генерик-маппер не используется: OrderItemDao сам строит домен и
-        // сущность (см. findByOrderId/saveAll). Методы AbstractDao, опирающиеся
+        // сущность (см. findAllByOrderIds/saveAll). Методы AbstractDao, опирающиеся
         // на mapper (findAll/findById/...), для позиций не применяются.
         super(repository, new Mapper<OrderItem, com.rbdip.bookstore.order.repository.entities.OrderItem>() {
             @Override
@@ -41,7 +41,7 @@ public class OrderItemDao extends AbstractDao<OrderItem, com.rbdip.bookstore.ord
 
             @Override
             public OrderItem unmap(com.rbdip.bookstore.order.repository.entities.OrderItem entity) {
-                throw new UnsupportedOperationException("Чтение позиций выполняется через OrderItemDao#findByOrderId");
+                throw new UnsupportedOperationException("Чтение позиций выполняется через OrderItemDao#findAllByOrderIds");
             }
         });
         this.orderItemRepository = repository;
@@ -49,8 +49,11 @@ public class OrderItemDao extends AbstractDao<OrderItem, com.rbdip.bookstore.ord
         this.productMapper = productMapper;
     }
 
-    public List<OrderItem> findByOrderId(Long orderId) {
-        return orderItemRepository.findByOrderId(orderId).stream()
+    public List<OrderItem> findAllByOrderIds(List<Long> orderIds) {
+        if (orderIds.isEmpty()) {
+            return List.of();
+        }
+        return orderItemRepository.findAllByOrderIdIn(orderIds).stream()
                 .map(this::toDomain)
                 .toList();
     }
